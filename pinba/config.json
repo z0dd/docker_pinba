@@ -1,0 +1,18 @@
+{
+  "workers": [
+    {
+      "host": "0.0.0.0",
+      "port": 30002,
+      "clickhouseUrl": "http:\/\/clickhouse:8123?user=default",
+      "clickhouseTable": "pinba.requests",
+      "timer": 60
+    },
+    {
+      "host": "0.0.0.0",
+      "port": 30003,
+      "clickhouseUrl": "http:\/\/clickhouse:8123?user=default",
+      "clickhouseTable": "pinba.nginx_requests",
+      "timer": 60
+    }
+  ]
+}

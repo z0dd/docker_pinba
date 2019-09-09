@@ -1,0 +1,49 @@
+version: '3.7'
+
+services:
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    hostname: grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/data/:/var/lib/grafana/
+    environment:
+      - "GF_SECURITY_ADMIN_PASSWORD=123123"
+      - "GF_SERVER_ROOT_URL=http://grafana.local"
+      - "GF_INSTALL_PLUGINS=vertamedia-clickhouse-datasource"
+    networks:
+      - monitoring-network
+
+  clickhouse:
+    build: ./clickhouse
+    container_name: clickhouse
+    hostname: clickhouse
+    restart: unless-stopped
+    ports:
+      - "8123:8123"
+    volumes:
+      - ./clickhouse/tables/:/opt/clickhouse/
+    networks:
+      - monitoring-network
+
+  pinba:
+    build: ./pinba
+    container_name: pinba
+    hostname: pinba
+    restart: unless-stopped
+    ports:
+      - "30002:30002/udp"
+      - "30003:30003/udp"
+    command: bash -c "cd /opt/pinba-server/ && /usr/bin/php workerman_clickhouse.php start"
+    volumes:
+      - ./pinba/config.json:/opt/pinba-server/config.json
+    tty: true
+    networks:
+      - monitoring-network
+
+networks:
+    monitoring-network:
+        driver: bridge
