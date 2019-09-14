@@ -29,8 +29,6 @@ RUN cd /opt/ && git clone https://github.com/pinba-server/pinba-server.git && cd
 # protobuf & libevent
 RUN yum -y install php-pecl-protobuf php-pecl-event php-posix
 
-CMD ["/bin/bash"]
+COPY ./config.json /opt/pinba-server/config.json
 
-#systemctl daemon-reload
-#systemctl enable pinba-server clickhouse-server grafana-server pinba-server php7.3-fpm
-#systemctl restart clickhouse-server grafana-server pinba-server php7.3-fpm
+CMD ["/bin/bash"]

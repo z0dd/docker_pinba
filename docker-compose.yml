@@ -1,6 +1,7 @@
 version: '3.7'
 
 services:
+
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
@@ -8,24 +9,18 @@ services:
     restart: unless-stopped
     ports:
       - "3000:3000"
-    volumes:
-      - ./grafana/data/:/var/lib/grafana/
-    environment:
-      - "GF_SECURITY_ADMIN_PASSWORD=123123"
-      - "GF_SERVER_ROOT_URL=http://grafana.local"
-      - "GF_INSTALL_PLUGINS=vertamedia-clickhouse-datasource"
+    env_file:
+      - .env
     networks:
       - monitoring-network
 
   clickhouse:
-    build: ./clickhouse
+    image: yandex/clickhouse-server
     container_name: clickhouse
     hostname: clickhouse
     restart: unless-stopped
-    ports:
-      - "8123:8123"
     volumes:
-      - ./clickhouse/tables/:/opt/clickhouse/
+      - ./clickhouse/tables/pinba.requests.sql:/docker-entrypoint-initdb.d/pinba.requests.sql
     networks:
       - monitoring-network
 
@@ -36,11 +31,21 @@ services:
     restart: unless-stopped
     ports:
       - "30002:30002/udp"
-      - "30003:30003/udp"
     command: bash -c "cd /opt/pinba-server/ && /usr/bin/php workerman_clickhouse.php start"
-    volumes:
-      - ./pinba/config.json:/opt/pinba-server/config.json
     tty: true
+    networks:
+      - monitoring-network
+
+  pinba_client:
+    build: ./pinba_client
+    container_name: pinba_client
+    hostname: pinba_client
+    restart: unless-stopped
+    volumes:
+      - ./app/:/var/www/
+      - ./pinba_client/app.conf:/etc/nginx/conf.d/app.conf
+    ports:
+      - "13131:80"
     networks:
       - monitoring-network
 

@@ -1,33 +1,52 @@
 # docker_pinba
-simple start pinba in docker with clickhouse and grafana.
+Simple start pinba in docker compose with clickhouse and grafana.
 
-Docker remaster of https://github.com/pinba-server/pinba-server.
+Docker compose remaster of https://github.com/pinba-server/pinba-server.
 
-## Pinba server
+## Requirements
+Docker          version >=18.06
+docker-compose  version >=1.23.2
+git             version 2.7.4
+
+## Installation
 ```sh
-git clone
-update your docker-compose.yml
+# clone repo
+git clone https://github.com/z0dd/docker_pinba.git && cd cd docker_pinba
+# create env file
+cp .env.example .env
+# start containers
 docker-compose up -d
 ````
+### Grafana
+Visit 		http://localhost:3000
 
-visit http://your_grafana:3000
+> [!NOTE]
+> Login: admin
+> Password: see in your .env
 
-## PHP Pinba client
-Install pinba in app server:
-apt -y install php-pinba
-edit your /mods-available/pinba.ini
-```sh
-extension=pinba.so
-pinba.enabled=1
-pinba.server=pinba_server_url:30002
-````
+##### Add datasourse to Grafana
+- Go to "Configuration" -> Data Sources
+- Find Clickhouse
+- Fill URL field like *http://clickhouse:8123*
+- Press **Save & Test**
+
+### Pinba client
+For generate test data you should visit *http://localhost:13131*
+
+> [!NOTE]
+> You can change test app as you want in **/app**
+
+### Clickhouse
+You can check data in table by 
+````docker exec clickhouse clickhouse-client -d pinba -q "select * from requests"````
+
+> [!NOTE]
+> Pinba server flush data to clickhouse every 60s.
 
 
-I strongly don't recommend use it in production.
-
-### Pinba project (by tony2001 https://github.com/tony2001)
+#### Pinba project (by tony2001 https://github.com/tony2001)
 http://pinba.org/ 
 https://github.com/tony2001/pinba_engine
 
-### Pinba server (by Vladimir Goncharov https://github.com/morozovsk)
+#### Pinba server (by Vladimir Goncharov https://github.com/morozovsk)
 https://github.com/pinba-server
