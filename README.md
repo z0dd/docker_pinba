@@ -4,12 +4,12 @@ Simple start pinba in docker compose with clickhouse and grafana.
 Docker compose remaster of https://github.com/pinba-server/pinba-server.
 
 ## Requirements
-Docker          version >=18.06
-docker-compose  version >=1.23.2
-git             version 2.7.4
+- Docker          version >=18.06
+- docker-compose  version >=1.23.2
+- git             version 2.7.4
 
 ## Installation
-```sh
+````
 # clone repo
 git clone https://github.com/z0dd/docker_pinba.git && cd cd docker_pinba
 # create env file
